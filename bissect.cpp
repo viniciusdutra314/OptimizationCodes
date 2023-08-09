@@ -3,14 +3,14 @@
 #include <math.h>
 
 float function(float x){
-    return x*x -5*x +6;
+    return sin(x)*x +x -(x*x)/10;
 
 }
 
 int main(int argc, char *argv[])
 {   float x0=atof(argv[1]); // initial guess
     float a,b ,c;
-    a=1 ; b=2.5 ; 
+    a=1 ; b=4 ; 
     if (signbit(function(a))==signbit(function(b))){
         printf("f(a) tem o mesmo sinal de f(b)");exit(1);}
     int N = 100;
@@ -21,5 +21,5 @@ int main(int argc, char *argv[])
         if (abs(f_c)<epislon){break;}
         if (signbit(f_c)==signbit(function(a))) {a=c;}
         if (signbit(f_c)==signbit(function(b))){b=c;}}
-    printf("x=%f",c);
+    printf("%f",c);
 }
