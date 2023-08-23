@@ -8,7 +8,6 @@ float function(float x)
 float derivate(float x)
     {return cos(x);}
 
-
 int main(int argc, char *argv[])
 {  float x0=atof(argv[1]);
    if (derivate(x0)==0){
