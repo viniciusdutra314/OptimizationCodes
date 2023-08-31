@@ -23,7 +23,7 @@ def newton(x0 : float, func : callable, grad : callable,
     x1=x0-(func(x0)/grad(x0))
     iterations+=1
     if (iterations>max_int): break
-    if (abs(x1-x0)<epsilon): break
+    if (np.abs(x1-x0)<epsilon): break
     x0=x1
   time_interval=perf_counter_ns()-start
   return np.array([x0,func(x0),iterations,time_interval,epsilon,initial_guess,distancia])
@@ -37,7 +37,7 @@ epsilon :float, max_int=100, distancia : float =1):
     x1=x0-(func(x0)/grad(x0))/(1-(secondgrad(x0)*func(x0))/(2*grad(x0)**2))
     iterations+=1
     if (iterations>max_int):break
-    if (abs(x1-x0)<epsilon):break
+    if (np.abs(x1-x0)<epsilon):break
     x0=x1
   time_interval=perf_counter_ns()-start
   return np.array([x0,func(x0),iterations,time_interval,epsilon,initial_guess,distancia])
