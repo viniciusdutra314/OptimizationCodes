@@ -1,25 +1,32 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-df_newton=pd.read_csv("temporario/newton.csv")
-df_halley=pd.read_csv("temporario/halley.csv")
 quantidade=50
-newton_medias=[1e-9*sum(df_newton['Tempo'][1000*i:1000*(i+1)]) for i in range(quantidade)]
-halley_medias=[1e-9*sum(df_halley['Tempo'][1000*i:1000*(i+1)]) for i in range(quantidade)]
-halley_newton=[halley_medias[j]/newton_medias[j] for j in range(quantidade)]
-fig,axes=plt.subplots(1,2,figsize=(10,5))
+filename='erros'
+df_newton=pd.read_csv(f"newton_{filename}.csv")
+df_halley=pd.read_csv(f"halley_{filename}.csv")
+filter_newton=df_newton['Convergiu']==1
+filter_halley=df_halley['Convergiu']==1
+df_newton=df_newton[filter_newton]
+df_halley=df_halley[filter_halley]
+newton_medias=np.array([1e-9*df_newton.loc[df_newton['Epsilon']==np.longdouble(10**(-i)), 'Tempo'].sum() for i in range(quantidade)])
+halley_medias=np.array([1e-9*df_halley.loc[df_halley['Epsilon']==np.longdouble(10**(-i)), 'Tempo'].sum() for i in range(quantidade)])
+breakpoint()
+halley_newton=halley_medias/newton_medias
+fig,axes=plt.subplots(1,2,figsize=(10,6))
 axes[1].scatter(range(quantidade),newton_medias,label='Newton')
 axes[1].scatter(range(quantidade),halley_medias,label="Halley")
-axes[1].set_xlabel(r"$-log(\epsilon)$")
-axes[1].set_ylabel(r"Tempo de processamento (s)")
-axes[1].set_yscale('log')
+axes[1].set_xlabel("Grau do polinômio")
+axes[1].set_ylabel("Tempo de processamento (s)")
 print(sum(df_newton['Tempo']))
 print(sum(df_halley['Tempo']))
 axes[1].grid()
 axes[1].legend()
 axes[0].scatter(range(quantidade),halley_newton,color='g')
-axes[0].set_xlabel(r"$-log(\epsilon)$")
+axes[0].set_xlabel("Grau do polinômio")
 axes[0].set_ylabel("Razão Halley/Newton")
+axes[0].axhline(np.mean(halley_newton[2::]),label=f"Média = {round(np.mean(halley_newton[2::]),2)}")
 axes[0].grid()
-axes[1].set_title("Polinômio de grau 100")
-fig.savefig("temporario//exemplo.png",dpi=400)
+axes[0].legend()
+fig.suptitle("Polinômios com raizes de multiplicidade 2")
+fig.savefig(f"{filename}.png",dpi=400)
