@@ -1,4 +1,4 @@
-import numpy as np  
+import numpy as np
 import matplotlib.pyplot as plt
 
 def discrete_fourier(f :list) -> list :
@@ -12,7 +12,7 @@ def discrete_fourier(f :list) -> list :
 a=0 ; frequency=534 ; N=300; b=N/frequency
 t=np.linspace(a,b,N)
 
-f=np.sin((2*np.pi)*100*t)
+f=np.sin((2*np.pi)*100*t)+0.3*np.cos((2*np.pi)*70*t)+0.5*np.random.random(N)
 F=discrete_fourier(f)
 x=np.fft.fftfreq(N,1/frequency)
 plt.style.use("seaborn-v0_8")
@@ -20,7 +20,9 @@ fig,axis=plt.subplots(1,2,figsize=(8, 6))
 axis[0].plot(x[:N//2],np.abs(F)[:N//2])
 axis[0].set_xlabel("Frequências Hz")
 axis[0].set_ylabel("Magnitude")
-axis[1].plot(x[:N//2],np.angle(F)[:N//2])
-axis[1].set_xlabel("Frequências Hz")
-axis[1].set_ylabel("Fase")
-fig.savefig("teste.png")
+axis[1].plot(t,f)
+axis[1].set_xlabel("Tempo")
+axis[1].set_ylabel("f(t)")
+axis[1].set_xlim(0,1e-1)
+fig.savefig("dft_example.jpg",dpi=200)
+
