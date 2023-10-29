@@ -23,14 +23,12 @@ def newton(initial_guess,func, grad,hessian):
     epsilon=1e-7
     x=initial_guess
     while (times<iterations):
+        print(x)
         times+=1
-        try:
-            inversa=-np.linalg.inv(hessian(x))
-        except np.linalg.LinAlgError:
-            inversa=-np.linalg.inv(hessian(x*(1.01)))
+        inversa=-np.linalg.inv(hessian(x))
         step= inversa@ grad(x)
         x+=step
         if func(x)<epsilon: break
-    print(x)
 
-newton((-35,1),func,grad,hessian)
+
+newton(np.array([34,15]),func,grad,hessian)
