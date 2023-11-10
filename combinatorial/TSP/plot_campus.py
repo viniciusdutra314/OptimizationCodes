@@ -30,15 +30,19 @@ for j in range(N-1):
     arrow_properties = dict(facecolor='green', edgecolor='green', 
                             arrowstyle='->',linestyle='--')
     ax.annotate('', xytext=arrow_start, xy=arrow_end, 
-                arrowprops=arrow_properties)
+                arrowprops=arrow_properties,
+                ha='center', va='center')
 for index, row in coordinates.iterrows():
     ax.text(row['Longitude'], row['Latitude'], 
             row['Campus'],fontsize=8,color='blue', 
             transform=ccrs.PlateCarree(), )
 ax.scatter(coordinates['Longitude'],coordinates['Latitude'],
            color='r',label='Campi USP')
-ax.scatter(x[0],y[0],label='Início',color='purple')
-ax.scatter(x[-1],y[-1],label='Fim',color='aqua')
+if permutation[0]!=permutation[-1]:
+    ax.scatter(x[0],y[0],label='Início',color='purple')
+    ax.scatter(x[-1],y[-1],label='Fim',color='aqua')
+else:
+    ax.scatter(x[0],y[0],label='Começo do ciclo',color='purple')
 ax.set_title(f"Distância total de {total_value}km")
 ax.legend()
 ax.axis('equal')

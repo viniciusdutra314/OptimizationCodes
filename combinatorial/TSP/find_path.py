@@ -10,7 +10,7 @@ coordinates = pd.read_csv('dados//campus_usp.csv')
 
 parser = argparse.ArgumentParser()
 parser.add_argument("start", help='Cidade inicial')
-parser.add_argument("end",required=False)
+parser.add_argument("end")
 args = parser.parse_args()
 name_to_row = {coordinates['Campus'][j]
     : j for j in range(coordinates['Campus'].size)}
@@ -31,10 +31,10 @@ for permutacao in permutations(range(N), N):
             shortest_path = [total_path, permutacao]
 
 
-with open(f'detalhes_caminhos//{args.start}{args.end}.txt','w') as txt:
+with open(f'detalhes_caminhos//{args.start} {args.end}.txt','w') as txt:
     txt.write(f"Caminho mínimo de {shortest_path[0]}km\n\n")
     txt.write(f"Fazendo esse trajeto:\n")
-    for index in range(len(shortest_path[1])-2):
+    for index in range(len(shortest_path[1])-1):
         point_a = shortest_path[1][index]
         point_b = shortest_path[1][index+1]
         txt.writelines(f"{coordinates['Campus'][point_a]} -> "
