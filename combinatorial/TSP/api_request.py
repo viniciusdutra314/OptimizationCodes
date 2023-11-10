@@ -1,10 +1,12 @@
+import numpy as np
 import pandas as pd
 import routingpy as rp
-import numpy as np
-df=pd.read_csv('campus_usp.csv')
+
+df = pd.read_csv('dados//campus_usp.csv')
 coordinates = df[['Longitude', 'Latitude']].values
-api_key ='fee79717-7f76-483d-8fad-e338a180a4a8'
+api_key = '01ebf754-830b-493d-aa76-e6e1b540d5e9'
 api = rp.Graphhopper(api_key=api_key)
 matrix = api.matrix(locations=coordinates, profile='car')
-durations = np.matrix(matrix.durations)
-np.savetxt('matriz_campus.txt',durations)
+distances = np.matrix(matrix.distances)
+distances = np.round(distances/1000)
+np.savetxt('dados//matriz_campus.txt', distances)
