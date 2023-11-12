@@ -1,5 +1,3 @@
-import argparse
-import os
 
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
@@ -7,29 +5,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import routingpy as rp
-diretorio=os.path.join(os.getcwd(),'run_folder')
-arquivo=[file for file in os.listdir(diretorio) if file.endswith('.csv')]
-assert len(arquivo)==1 , "Mais de uma base de dados selecionada na run_folder"
-arquivo=os.path.splitext(arquivo[0])[0]
 
-
-coordinates=pd.read_csv(f'run_folder//{arquivo}.csv')
-distances=np.loadtxt(f'run_folder//matriz_{arquivo}.txt')
-
-parser=argparse.ArgumentParser()
-parser.add_argument("total_value",type=float)
-parser.add_argument("permutation",nargs='+',type=int)
-args=parser.parse_args()
-total_value=args.total_value
-permutation=args.permutation
-
-
+from receive_args_view import get_args
+shortestpath,coords,data,start,end=get_args()
+total_value,permutation=shortestpath
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
 
 N=len(permutation)
-x=[coordinates['Longitude'][j] for j in permutation]
-y=[coordinates['Latitude'][j] for j in permutation]
+x=[coords['Longitude'][j] for j in permutation]
+y=[coords['Latitude'][j] for j in permutation]
 
 api_key = '4997bc4c-ec02-44c2-a873-310553d2f25f'
 api = rp.Graphhopper(api_key=api_key)
@@ -52,7 +37,7 @@ ax.add_feature(cfeature.LAKES, alpha=0.5)
 ax.add_feature(cfeature.RIVERS)
 ax.add_feature(cfeature.STATES)
 
-ax.scatter(coordinates['Longitude'],coordinates['Latitude'],
+ax.scatter(coords['Longitude'],coords['Latitude'],
            color='r',label='Cidades')
 if permutation[0]!=permutation[-1]:
     ax.scatter(x[0],y[0],label='Início',color='purple')
@@ -60,13 +45,13 @@ if permutation[0]!=permutation[-1]:
 else:
     ax.scatter(x[0],y[0],label='Começo do ciclo',color='purple')
 
-dy=np.max(coordinates['Latitude'])-np.min(coordinates['Latitude'])
+dy=np.max(coords['Latitude'])-np.min(coords['Latitude'])
 
-for index in range(len(permutation)-1):
+for index in range(len(permutation)):
         num=permutation[index]
-        text_to_box=f"({index}){coordinates['Cidade'][num]}"
-        x_coord=coordinates['Longitude'][num]
-        y_coord=coordinates['Latitude'][num]
+        text_to_box=f"({index}){coords['Cidade'][num]}"
+        x_coord=coords['Longitude'][num]
+        y_coord=coords['Latitude'][num]
         ax.text(x_coord, y_coord-0.04*dy, 
                 text_to_box,fontsize=4,color='blue', 
                 transform=ccrs.PlateCarree(), 
