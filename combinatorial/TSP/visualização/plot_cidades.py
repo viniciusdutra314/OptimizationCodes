@@ -7,7 +7,7 @@ import routingpy as rp
 
 from receive_args_view import get_args
 
-shortestpath, coords, data, start, end = get_args()
+shortestpath, coords, data, start, end,algoritmo = get_args()
 
 total_value, permutation = shortestpath
 fig = plt.figure()
@@ -30,7 +30,7 @@ for i in range(N - 1):
     path_label = None if i != 0 else 'Caminhos ótimos'
     ax.plot(x_path,y_path,color='lime',
         linestyle='dashed',alpha=0.7,label=path_label)
-ax.set_title(f'Distância total de {total_value}km')
+ax.set_title(f'Algoritmo {algoritmo}, Distância total de {total_value}km')
 
 ax.add_feature(cfeature.LAND)
 ax.add_feature(cfeature.OCEAN)
@@ -61,4 +61,4 @@ if len(permutation)<100: #captions only in low density maps
 
 ax.legend()
 ax.axis('equal')
-fig.savefig('temp_resultado.jpg', dpi=400)
+plt.savefig(f'{algoritmo}{start}{end}.jpg')

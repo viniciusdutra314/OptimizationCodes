@@ -13,6 +13,7 @@ def get_args():
     parser.add_argument(
         '--shortestpath', help='List with total distance and permutation'
     )
+    parser.add_argument('--algoritmo')
     args = parser.parse_args()
     shortestpath = eval(f'{args.shortestpath}')
     data_directory = os.path.join(
@@ -33,4 +34,4 @@ def get_args():
         args.start = names_to_numbers[args.start]
         args.end = names_to_numbers[args.end]
     except:...
-    return shortestpath, coords, data, args.start, args.end
+    return shortestpath, coords, data, args.start, args.end,args.algoritmo
