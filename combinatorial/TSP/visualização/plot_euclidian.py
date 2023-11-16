@@ -9,5 +9,5 @@ y_value=[coords.iloc[int(i)][2] for i in shortestpath[1]]
 plt.plot(x_value,y_value,label='Caminho encontrado')
 plt.grid()
 plt.legend()
-plt.title(f"Método {algoritmo}, fitness = {shortestpath[0]}")
-plt.savefig(f'{algoritmo}{start}{end}.jpg')
+plt.title(f"Método {algoritmo}, cost = {shortestpath[0]}")
+plt.savefig(f'euclidian{algoritmo}{start}{end}.jpg')

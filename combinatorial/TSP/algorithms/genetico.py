@@ -54,9 +54,9 @@ class Individual:
         return len(self.gene)
 
 
-def random_reverse(individual : Individual, length : int=2) -> Individual:
-    assert length <= len(individual)-2 , "Comprimento maior que gene"
+def random_reverse(individual : Individual) -> Individual:
     x=list(np.copy(individual.gene))
+    length=np.random.randint(2,len(individual)-2)
     while True:
         index=np.random.choice(list(range(len(x)))[1:-1], replace=False)
         if index+length<=len(x)-2:
@@ -66,8 +66,9 @@ def random_reverse(individual : Individual, length : int=2) -> Individual:
     gene_end=x[index+length:]
     return Individual(np.array(gene_start+gene_middle+gene_end))
 
-def random_swap(individual: Individual,times: int =1) -> Individual:
+def random_swap(individual: Individual) -> Individual:
     x=np.copy(individual.gene)
+    times=np.random.randint(1,len(individual))
     for _ in range(times):
         index_a, index_b = np.random.choice(
             list(range(len(x)))[1:-1], 2, replace=False)
@@ -81,6 +82,7 @@ def natural_selection(IndividualArray : list[Individual],
     chances=individual_fitness/total_fitness
     assert np.isclose(np.sum(chances),1) , "probabilidade total diferente de 1"
     return np.random.choice(IndividualArray,p=chances,size=num_individuals)
+
 def assexual_reproduction(IndividualArray : list[Individual]) -> list[Individual]:
     return IndividualArray
 def show_individuals_stats(IndividualArray : list[Individual]) -> None:
@@ -90,21 +92,26 @@ def show_individuals_stats(IndividualArray : list[Individual]) -> None:
     print(f"Média {np.mean(IndividualArray):.2f}")
     print(f"Desvio {np.std(IndividualArray):.2f}")
     print(f"Max {np.max(IndividualArray)}")
-NUM_GENERATIONS = 1000
+NUM_GENERATIONS = 10000  
 NUM_INDIVIDUALS=100
-MUTATION_RATE=0.1
-REVERSE_RATE=0.01
+SWAP_RATE=0.8
+REVERSE_RATE=0.2
 individuals=[Individual() for _ in range(NUM_INDIVIDUALS)]
 possibilites=[random_swap,random_reverse,lambda x: x]
-p=[MUTATION_RATE,REVERSE_RATE]
+p=[SWAP_RATE,REVERSE_RATE]
 p=p+[1-sum(p)]
 random_event=np.random.choice(possibilites,p=p,size=NUM_INDIVIDUALS)
-show_individuals_stats(individuals)
-for _ in range(NUM_GENERATIONS):
+all_costs=np.zeros(shape=(NUM_GENERATIONS,NUM_INDIVIDUALS))
+for i in range(NUM_GENERATIONS):
+    all_costs[i]=[x.cost() for x in individuals]
     individuals=natural_selection(individuals,NUM_INDIVIDUALS)
     offsprings=assexual_reproduction(individuals)
     for index, event in enumerate(random_event):
-        offsprings[index]=event(offsprings[index])
+        new_offspring=event(offsprings[index])
+        if new_offspring.fitness()>offsprings[index].fitness():
+            offsprings[index]=new_offspring
     individuals=offsprings
-show_individuals_stats(individuals)
+best_individual=np.max(individuals)
+np.savetxt('visualização//all_costs.txt',all_costs)
+print([best_individual.cost(),list(best_individual.gene)])
         

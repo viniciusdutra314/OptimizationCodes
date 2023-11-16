@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-num_points=10
+num_points=100
 coordinates=np.random.random(size=(num_points,2))
 data=np.zeros((num_points,num_points))
 for i in range(num_points):
