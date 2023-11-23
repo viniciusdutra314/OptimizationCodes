@@ -1,9 +1,6 @@
-import argparse
-import os
-from subprocess import run
+
 
 import numpy as np
-import pandas as pd
 
 from receive_args_alg import get_args
 
@@ -92,7 +89,7 @@ def show_individuals_stats(IndividualArray : list[Individual]) -> None:
     print(f"Média {np.mean(IndividualArray):.2f}")
     print(f"Desvio {np.std(IndividualArray):.2f}")
     print(f"Max {np.max(IndividualArray)}")
-NUM_GENERATIONS = 10000  
+NUM_GENERATIONS = 1000  
 NUM_INDIVIDUALS=100
 SWAP_RATE=0.8
 REVERSE_RATE=0.2

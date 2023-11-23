@@ -22,5 +22,5 @@ for i in range(len(cidades_nao_visitadas)):
                 NN[0]=possibilidades[j]
     cidades_visitadas[i+1]=NN[1]
     cidades_nao_visitadas.remove(NN[1])
-fitness=np.sum([data[cidades_visitadas[i]][cidades_visitadas[i+1]] for i in range(len(cidades_visitadas)-1)])
-print([fitness,list(cidades_visitadas)])
+total_distance=np.sum([data[cidades_visitadas[i]][cidades_visitadas[i+1]] for i in range(len(cidades_visitadas)-1)])
+print([total_distance,list(cidades_visitadas)])

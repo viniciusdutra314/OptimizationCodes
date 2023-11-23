@@ -7,7 +7,7 @@ from receive_args_alg import get_args
 data, start, end = get_args()
 
 N = len(data)
-NUM_ITERATIONS=1000000
+NUM_ITERATIONS=int(1E5)
 shortest_path = [np.infty, ()]
 permutar = [j for j in range(N) if j not in [start, end]]
 
