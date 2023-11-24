@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
-num_points=30
-coordinates=np.random.random(size=(num_points,2))
+num_points=100
+#coordinates=np.random.random(size=(num_points,2))
+coordinates=np.random.normal(loc=0,scale=1,size=(num_points,2))
 data=np.zeros((num_points,num_points))
 for i in range(num_points):
     for j in range(num_points):

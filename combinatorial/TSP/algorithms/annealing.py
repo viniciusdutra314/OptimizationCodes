@@ -1,7 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from receive_args_alg import get_args
-
+data, start, end = get_args()
+start=int(start)
+end=int(end)
+N=len(data)
 def total_distance(sequence, data):
     indices = np.array(sequence)
     return np.sum(data[indices[:-1], indices[1:]])
@@ -10,7 +13,8 @@ def random_sequence(N,start,end):
     permutacao=np.random.permutation(permutar)
     return [start] + list(permutacao) + [end]
 def update_temperature(iteration,max_iterations):
-    return np.exp(-20*iteration/max_iterations)
+    T0=1; alpha=3/max_iterations
+    return T0*np.exp(-alpha*iteration)
 def random_reverse(seq):
     x=list(np.copy(seq))
     length=np.random.randint(2,len(seq)-2)
@@ -31,12 +35,7 @@ def random_swap(seq):
         x[index_a], x[index_b] = x[index_b], x[index_a]
     return x
 
-
-update_temperature=np.vectorize(update_temperature)
-data, start, end = get_args()
-start=int(start)
-end=int(end)
-N=len(data)
+def delta_E(seq1,seq2)-> float
 
 
 NUM_ITERATIONS=int(1E5)

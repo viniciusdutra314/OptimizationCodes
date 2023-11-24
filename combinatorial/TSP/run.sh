@@ -22,6 +22,7 @@ if [ "$dados" == random ]; then
     ponto_b=0
 fi
 start=$(date +%s%N)
+python3 algorithms/$algoritmo.py --data "$dados" --start "$ponto_a" --end "$ponto_b"
 shortest_path=$(python3 algorithms/$algoritmo.py --data "$dados" --start "$ponto_a" --end "$ponto_b")
 end=$(date +%s%N)
 delta_t=$(echo "scale=2; ($end - $start) / 1000000000" | bc)
