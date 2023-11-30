@@ -49,7 +49,8 @@ class Individual:
 
     def __len__(self):
         return len(self.gene)
-
+    def __getitem__(self,item):
+        return self.gene[item]
 
 def random_reverse(individual : Individual) -> Individual:
     x=list(np.copy(individual.gene))
@@ -78,21 +79,55 @@ def natural_selection(IndividualArray : list[Individual],
     total_fitness=np.sum(individual_fitness)
     chances=individual_fitness/total_fitness
     assert np.isclose(np.sum(chances),1) , "probabilidade total diferente de 1"
-    return np.random.choice(IndividualArray,p=chances,size=num_individuals)
+    indices=np.random.choice(a=len(IndividualArray),p=chances,size=num_individuals)
+    survived=np.zeros(shape=(NUM_INDIVIDUALS,len(IndividualArray[0])),dtype=int)
+    for index,survival in enumerate(indices): survived[index]=IndividualArray[survival]
+    return survived
 
 def assexual_reproduction(IndividualArray : list[Individual]) -> list[Individual]:
     return IndividualArray
-def show_individuals_stats(IndividualArray : list[Individual]) -> None:
-    IndividualArray=[x.cost() for x in IndividualArray]
-    print("----")
-    print(f"Min {np.min(IndividualArray)}")
-    print(f"Média {np.mean(IndividualArray):.2f}")
-    print(f"Desvio {np.std(IndividualArray):.2f}")
-    print(f"Max {np.max(IndividualArray)}")
-NUM_GENERATIONS = 1000  
+def partially_mapped_crossover(parents : list[Individual]):
+    parents=np.delete(parents,[0,-1],axis=1)
+    gene_size=len(parents[0])
+    NUM_INDIVIDUALS=len(parents)
+    start_cut,end_cut = sorted(np.random.default_rng().choice(
+                        gene_size, size=2, replace=False))
+    offsprings=np.zeros(shape=(NUM_INDIVIDUALS,gene_size),dtype=int)
+    for i in range(NUM_INDIVIDUALS//2):
+        start_cut,end_cut=10,16
+        mapping={parents[2*i][j]:parents[2*i+1][j] for j in range(start_cut,end_cut)}
+        reverse_mapping={parents[2*i+1][j]:parents[2*i][j] for j in range(start_cut,end_cut)}
+        offsprings[2*i][start_cut:end_cut]=parents[2*i+1][start_cut:end_cut]
+        offsprings[2*i+1][start_cut:end_cut]=parents[2*i][start_cut:end_cut]
+        for j in range(2):
+            for index,element in enumerate(parents[2*i+j]):
+                if not (start_cut<=index<end_cut):
+                    if element not in offsprings[2*i+j]:
+                        offsprings[2*i+j][index]=element
+        for j in range(2):
+            for index,number in enumerate(offsprings[2*i+j]):
+                if number==0:
+                    element=parents[2*i+j][index]
+                    visited=[element]
+                    while True:
+                        if element in mapping:
+                            next_element=mapping[element]
+                            if  next_element not in visited:
+                                visited.append(next_element)
+                                element=next_element
+                                if element not in offsprings[2*i+j]: break
+                        if element in reverse_mapping:
+                            next_element=reverse_mapping[element]
+                            if  next_element not in visited:
+                                visited.append(next_element)
+                                element=next_element
+                                if element not in offsprings[2*i+j]: break
+                    offsprings[2*i+j][index]=element
+    return offsprings
+NUM_GENERATIONS = 1000
 NUM_INDIVIDUALS=100
-SWAP_RATE=0.8
-REVERSE_RATE=0.2
+SWAP_RATE=0.4
+REVERSE_RATE=0.1
 individuals=[Individual() for _ in range(NUM_INDIVIDUALS)]
 possibilites=[random_swap,random_reverse,lambda x: x]
 p=[SWAP_RATE,REVERSE_RATE]
@@ -102,7 +137,7 @@ all_costs=np.zeros(shape=(NUM_GENERATIONS,NUM_INDIVIDUALS))
 for i in range(NUM_GENERATIONS):
     all_costs[i]=[x.cost() for x in individuals]
     individuals=natural_selection(individuals,NUM_INDIVIDUALS)
-    offsprings=assexual_reproduction(individuals)
+    offsprings=partially_mapped_crossover(individuals)
     for index, event in enumerate(random_event):
         new_offspring=event(offsprings[index])
         if new_offspring.fitness()>offsprings[index].fitness():
