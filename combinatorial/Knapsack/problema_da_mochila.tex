@@ -1,0 +1,233 @@
+\documentclass{article}
+\usepackage[portuguese]{babel}
+\usepackage[a4paper, top=3cm, bottom=2cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{blindtext}
+\usepackage{datetime}
+\usepackage{csvsimple}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx} 
+\usepackage{minted}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{indentfirst}
+\usepackage{fancyhdr}  
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{hyperref}
+
+\newcommand{\annotationbox}[3]{
+    \definecolor{currentcol}{named}{#3} 
+    \begin{tcolorbox}[colback=currentcol!5!white, colframe=currentcol!75!black, title={#1}]
+        {#2}
+    \end{tcolorbox}
+}
+
+\newcommand{\coded}[5]{
+    \definecolor{Gray}{gray}{0.9}
+    \begin{minipage}{\textwidth}
+        \captionof{listing}{{#5}}
+        \inputminted[
+            frame=lines,
+            framesep=2mm,
+            baselinestretch=1.2,
+            firstline={#3},
+            lastline={#4},
+            bgcolor=Gray,
+            linenos]{#1}{#2}
+    \end{minipage}
+}
+\renewcommand\listingscaption{Código}
+\renewcommand\listoflistingscaption{Lista de Códigos}
+
+\newcommand{\csvtable}[3][]{%
+  \begin{table}[H]
+    \centering
+    \csvautotabular{#2}
+    \caption{#3}
+    \IfNoValueF{#1}{\label{tab:#1}}
+  \end{table}%
+}
+%uniform ref
+\newcommand{\figref}[1]{figura \ref{#1}}
+\newcommand{\tabref}[1]{tabela \ref{#1}}
+\newcommand{\eqnref}[1]{equação (\ref{#1})}
+
+\newcommand{\theauthor}{Vinícius Sousa Dutra (13686257)}
+\newcommand{\thetitle}{Problema da Mochila}
+
+\newcommand{\addimage}[3][100mm]{
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width={#1}]{{#2}}
+        \caption{{#3}}
+    \end{figure}    
+}   
+
+\pagestyle{fancy}  
+\fancyhf{}  
+\rhead{\theauthor} 
+\lhead{Problema da Mochila}  
+\cfoot{\thepage} 
+
+
+\begin{document}
+
+
+
+\begin{titlepage}
+    \begin{center}
+        \begin{figure}[htb!]
+            \centering
+            \includegraphics[width=150mm]{images/ifsc_logo.jpg}
+        \end{figure}
+        \vspace{20pt}
+        \LARGE{\textbf{Universidade de São Paulo}}\\
+        \LARGE{Instituto de Física de São Carlos}\\
+
+        \vspace{150pt}
+
+        
+        \LARGE{\textbf{{\thetitle}}} 
+        \\ 
+        \textsc{\LARGE Otimização combinatória}
+        \\
+        
+        
+        \vspace{125pt}
+        \begin{minipage}{\textwidth}
+            \begin{flushleft} \large
+                \textbf{Professor:}\\
+                Luciano da Fontoura Costa\\[0.8cm]
+                \textbf{Aluno:}\\
+                \theauthor
+                
+                \end{flushleft}
+                \end{minipage}\\[1 cm]
+        \vspace{30pt}
+        \vspace{\fill}  
+        \Large {\today}
+
+    \end{center}
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\listoffigures
+\listoftables
+\listoflistings
+\newpage
+\section{Definição}
+
+Formalmente podemos considerar o problema 
+como sendo
+\begin{equation}
+    maximize  \, \, \sum v_ix_i
+\end{equation}
+\begin{equation}
+    subject \, to \, \, \sum w_ix_i \le W
+\end{equation}
+
+Considerando que $v_i$ seja um conjunto de valores,
+$w_i$ seja um conjunto de pesos, $W$ seja o
+peso total e $x_i$ seja o número de itens escolhidos,
+temos um valor máximo $c_i$ associado a cada item.
+
+
+Dado que todas as demais variáveis são fixas, 
+a variável real no contexto do problema é $x_i$.
+O conjunto de soluções cresce de maneira exponencial, 
+quando consideramos o caso mais simples 
+no qual apenas um exemplar de cada item é permitido,
+o número de soluções viáveis é dado por 
+$2^{n-1}$, onde $n$ é o numero total de itens. 
+
+
+Isso ocorre devido ao fato de que o número total de 
+soluções possíveis é $2^n$, e para cada solução 
+não viável $X$, a sua solução complementar 
+$\overline{X}$ é uma solução viável.
+
+No caso que iremos estudar com $N=1000$ e com o 
+número de exemplares variados, o limite inferior 
+de soluções é de $10^{301}$. Um limite superior para 
+o conjunto específico de dados usados foi calculado 
+realizando a seguinte operação
+
+\begin{equation}
+    \log(L_{superior})=\sum   \log(c_i+1)
+\end{equation}
+\begin{equation}
+    L_{superior} \approx 10^{734}
+\end{equation}
+
+\section{Geração de Dados}
+Os dados são gerados de maneira aleatória
+usando esse pequeno script Python apresentado abaixo
+
+\coded{python3}{generate_csv.py}{1}{9}{Geração do csv}
+\section{Busca aleatória}
+A busca aleatória consiste em criar uma sequência 
+de $N$ zeros. Em seguida, são escolhidos 
+índices de forma aleatória, e para cada índice, 
+o espaço vazio é preenchido com um número
+aleatório de itens selecionados. 
+O processo é pausado até que o peso 
+máximo seja atingido. Em cada iteração, 
+a melhor solução encontrada é guardada.
+
+
+
+\coded{python3}{random_search.py}{26}{46}{Busca aleatória}
+
+\section{Simulated Annealing}
+
+O Simulated Annealing utilizado é semelhante ao 
+utilizado no Problema do Caixeiro Viajante 
+(TSP - Traveling Salesman Problem). 
+As soluções vizinhas são encontradas realizando 
+três operações básicas.
+
+\begin{itemize}
+    \item Adição aleatória de item
+    \item Remoção aleatória de item
+    \item Swap de índices
+\end{itemize}
+
+Para preservar a viabilidade da solução, 
+é sempre verificado se a operação é permitida.
+No final de ambos os códigos, é verificado se 
+a melhor solução é viável.
+
+\coded{python3}{simulated_annealing.py}{46}{78}{Simulated Annealing}
+
+\section{Conclusão}
+Ambos os algoritmos foram testados no mesmo conjunto 
+de dados com o mesmo número de iterações. 
+Observou-se que, para poucas iterações, os algoritmos 
+são equivalentes. Nas figuras abaixo, observou-se 
+que o método aleatório teve um desempenho um pouco
+melhor do que o Simulated Annealing (SA).
+
+
+\addimage{images/plot_SA_mil.jpg}{Simulated Annealing, $10^3$ iterações}
+\addimage{images/plot_random_search_mil.jpg}{Busca aleatória, $10^3$ iterações}
+
+No entanto, para $10^5$ iterações, é visível uma 
+estagnação da busca aleatória. Isso ocorre porque, 
+como discutido, o conjunto de soluções é muito 
+grande para encontrar boas soluções aleatoriamente. 
+Nesse caso, o Simulated Annealing (SA) encontrou 
+soluções cerca de 3 vezes melhores.
+
+Também foi observada uma diferença significativa 
+no tempo de execução, em que o SA teve um tempo
+de execução de $8s$ e a busca aleatória de $120s$. 
+Como o SA altera soluções já existentes em vez de 
+criar novas em cada iteração, ele acaba executando 
+mais rapidamente.
+
+\addimage{images/plot_SA.jpg}{Simulated Annealing, $10^5$ iterações}
+\addimage{images/plot_random_search.jpg}{Busca aleatória, $10^5$ iterações}
+\end{document}
